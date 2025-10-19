@@ -24,6 +24,7 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'type',
     ];
 
     /**
@@ -54,13 +55,14 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class, 'role_user');
     }
 
-    // public function checkIsAdmin()
-    // {
-    //     return $this->hasAnyRole(['admin', 'manager', 'operator']);
-    // }
+    public function hasPermission($permSlug)
+    {
+        foreach ($this->roles as $role) {
+            if ($role->permissions->pluck('slug')->contains($permSlug)) {
+                return true;
+            }
+        }
 
-    // public function checkIsMember()
-    // {
-    //     return $this->hasAnyRole(['registered', 'basic', 'advance', 'premium']);
-    // }
+        return false;
+    }
 }

@@ -1,4 +1,5 @@
-<aside class="bg-white fixed top-0 -left-full lg:left-0 w-[250px] h-[calc(100vh)] lg:h-[calc(100vh)] z-60 ">
+<aside
+    class="bg-gradient-to-tr from-panel to-light fixed top-0 -left-full lg:left-0 w-[250px] h-[calc(100vh)] lg:h-[calc(100vh)] z-60 ">
     <div class="sidmenu">
         <div class="w-full h-12 lg:h-14 flex items-center justify-center px-3 ">
             @if (Auth::user()->type === 'admin')

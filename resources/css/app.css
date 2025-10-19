@@ -52,23 +52,25 @@
         "Noto Color Emoji";
     --font-noto: "Noto Serif", "Time New Romans";
 
-    --color-primary: #205072;
-    --color-secondary: #329d9c;
-    --color-semi: #73c09c;
-    --color-light: #cff4d2;
-    --color-contras: #f7ad97;
-    --color-contras2: #f5907b;
-    --color-putih: #ecf5f5;
-    --color-hitam: #000000;
+    --color-primary: var(--primary);
+    --color-secondary: var(--secondary);
+    --color-semi: var(--semi);
+    --color-light: var(--light);
+    --color-contras: var(--contras);
+    --color-contras2: var(--contras2);
+    --color-putih: var(--putih);
+    --color-hitam: var(--hitam);
+    --color-panel: var(--panel);
 }
 
 :root {
     --primary: #205072;
     --secondary: #329d9c;
     --semi: #73c09c;
-    --light: #cff4d2;
+    --light: #cedfdf;
     --contras: #f7ad97;
     --contras2: #f5907b;
-    --putih: #ecf5f5;
+    --putih: #dfe9e9;
     --hitam: #000000;
+    --panel: #68b8b6;
 }
