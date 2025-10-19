@@ -1,0 +1,9 @@
+.kotak {
+    width: 200px;
+    height: 200px;
+    background-color: #9e7fd3;
+}
+
+.legok {
+    clip-path: path("M 0,0 L 0,calc(10%-32px) L 32,10%  Z");
+}
