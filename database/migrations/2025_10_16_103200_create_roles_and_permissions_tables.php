@@ -22,7 +22,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique(); // ex: Manage Users, Edit Post, etc
             $table->string('slug')->unique(); // ex: manage-users, edit-post
-            $table->string('group_name')->unique(); // ex: manage-users, edit-post
+            $table->string('group_name')->nullable(); // ex: manage-users, edit-post
             $table->timestamps();
         });
 
