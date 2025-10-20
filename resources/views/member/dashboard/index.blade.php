@@ -18,6 +18,9 @@
             @auth
                 {{ Auth::user()->username }}
             @endauth
+            <div class="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-black">
+                <img src="{{ Auth::user()->avatar }}" alt="" class="w-full h-full object-cover">
+            </div>
             <div class="w-full h-screen">klien</div>
             <div class="w-full h-screen">test</div>
         </div>

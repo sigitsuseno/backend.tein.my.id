@@ -6,11 +6,18 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\RolePermissionController;
 use App\Http\Controllers\Admin\UserRoleController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Member\MemberController;
 use App\Http\Controllers\Web\WebController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WebController::class, 'index'])->name('home');
+
+Route::prefix('auth/google')->group(function () {
+    Route::get('/redirect', [SocialAuthController::class, 'redirectToGoogle'])->name('google.redirect');
+    Route::get('/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('google.callback');
+    Route::post('/disconnect', [SocialAuthController::class, 'disconnectGoogle'])->name('google.disconnect');
+});
 
 // Auth Routes dengan AJAX support
 Route::middleware('guest')->group(function () {
