@@ -8,10 +8,17 @@ use App\Http\Controllers\Admin\UserRoleController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Member\MemberController;
+use App\Http\Controllers\Member\ProfileController;
 use App\Http\Controllers\Web\WebController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WebController::class, 'index'])->name('home');
+Route::get('/test', function () {
+    return view('web.testing');
+});
+Route::get('/test2', function () {
+    return view('web.testing2');
+});
 
 Route::prefix('auth/google')->group(function () {
     Route::get('/redirect', [SocialAuthController::class, 'redirectToGoogle'])->name('google.redirect');
@@ -46,7 +53,7 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['web', 'role:superadmin,admin,manager,operator'])
+    ->middleware(['web', 'role:superadmin,admin,dokter,operator'])
     ->group(function () {
         Route::get('/', [AdminController::class, 'index'])->name('index');
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
@@ -55,12 +62,12 @@ Route::prefix('admin')
             ->group(function () {
                 Route::get('/', [AdminController::class, 'userManager'])->name('index');
                 Route::get('/user', [AdminController::class, 'semuaUser'])->name('user');
-                Route::post('/store', [AdminController::class, 'store'])->name('store');
-                Route::get('/edit/{id}', [AdminController::class, 'edit'])->name('edit');
-                Route::post('/update/{id}', [AdminController::class, 'update'])->name('update');
-                Route::delete('/delete/{id}', [AdminController::class, 'delete'])->name('delete');
+                Route::post('/store', [AdminController::class, 'store'])->name('store')->middleware('permission:create-user');
+                Route::get('/edit/{id}', [AdminController::class, 'edit'])->name('edit')->middleware('permission:update-user');
+                Route::post('/update/{id}', [AdminController::class, 'update'])->name('update')->middleware('permission:update-user');
+                Route::delete('/delete/{id}', [AdminController::class, 'delete'])->name('delete')->middleware('permission:delete-user');
 
-                Route::controller(RoleController::class)->prefix('roles')->name('roles.')->group(function () {
+                Route::controller(RoleController::class)->prefix('roles')->middleware('permission:manage-role')->name('roles.')->group(function () {
                     Route::get('/page', 'page')->name('page');
                     Route::get('/', 'index')->name('index');
                     Route::post('/store', 'store')->name('store');
@@ -69,16 +76,20 @@ Route::prefix('admin')
                     Route::delete('/delete/{id}', 'destroy')->name('delete');
                 });
 
-                Route::controller(PermissionController::class)->prefix('permissions')->name('permissions.')->group(function () {
-                    Route::get('/page', 'page')->name('page');
-                    Route::get('/', 'index')->name('index');
-                    Route::post('/store', 'store')->name('store');
-                    Route::get('/edit/{id}', 'edit')->name('edit');
-                    Route::post('/update/{id}', 'update')->name('update');
-                    Route::delete('/delete/{id}', 'destroy')->name('delete');
-                });
+                Route::controller(PermissionController::class)
+                    ->prefix('permissions')
+                    ->middleware('permission:manage-permission')
+                    ->name('permissions.')
+                    ->group(function () {
+                        Route::get('/page', 'page')->name('page');
+                        Route::get('/', 'index')->name('index');
+                        Route::post('/store', 'store')->name('store');
+                        Route::get('/edit/{id}', 'edit')->name('edit');
+                        Route::post('/update/{id}', 'update')->name('update');
+                        Route::delete('/delete/{id}', 'destroy')->name('delete');
+                    });
 
-                Route::controller(UserRoleController::class)->prefix('user-role')->name('user-role.')->group(function () {
+                Route::controller(UserRoleController::class)->prefix('user-role')->middleware('permission:manage-user-role')->name('user-role.')->group(function () {
                     Route::get('/page', 'page')->name('page');
                     Route::get('/', 'index')->name('index');
                     Route::get('/{id}', 'show')->name('show');
@@ -88,6 +99,7 @@ Route::prefix('admin')
                 Route::controller(RolePermissionController::class)
                     ->prefix('role-permission')
                     ->name('role-permission.')
+                    ->middleware('permission:manage-role-permission')
                     ->group(function () {
                         Route::get('/page', 'page')->name('page');
                         Route::get('/', 'index')->name('index');
@@ -98,9 +110,20 @@ Route::prefix('admin')
     });
 
 // Route Member
-Route::get('/{keyname}', [MemberController::class, 'index'])->middleware(['role:superadmin,admin,member', 'validate.keyname'])->name('profile.detail');
+Route::get('/{keyname}', [MemberController::class, 'index'])->middleware(['role:superadmin,admin,dokter,operator,member', 'validate.keyname'])->name('profile.detail');
 Route::prefix('{keyname}')
-    ->middleware(['web', 'role:superadmin,admin,member', 'validate.keyname'])
+    ->middleware(['web', 'role:superadmin,admin,dokter,operator,member', 'validate.keyname'])
+    ->name('member.')
     ->group(function () {
-        Route::get('/dashboard', [MemberController::class, 'dashboard'])->name('member.dashboard');
+        Route::get('/dashboard', [MemberController::class, 'dashboard'])->name('dashboard');
+        Route::prefix('profile')
+            ->name('profile.')
+            ->controller(ProfileController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::post('/detail', 'updateDetail')->name('detail.update');
+                Route::post('/kontak', 'storeKontak')->name('kontak.store');
+                Route::put('/kontak/{id}', 'updateKontak')->name('kontak.update');
+                Route::delete('/kontak/{id}', 'destroyKontak')->name('kontak.destroy');
+            });
     });

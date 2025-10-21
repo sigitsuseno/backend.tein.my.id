@@ -14,7 +14,7 @@ class WebSettingSeeder extends Seeder
     {
         $webSetting = [
             ['name' => 'nama_app', 'isi' => 'Isian Formulir'],
-            ['name' => 'logo', 'isi' => '/assets/logo.png'],
+            // ['name' => 'logo', 'isi' => '/assets/logo.png'],
         ];
 
         foreach ($webSetting as $setting) {

@@ -6,6 +6,11 @@ use App\Models\Role;
 
 trait HasRolePermission
 {
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_user');
+    }
+
     // --- Role Management ---
     public function hasRole($roles)
     {

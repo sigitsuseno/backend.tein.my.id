@@ -14,7 +14,7 @@ class RolePermissionSeeder extends Seeder
         $roles = [
             ['name' => 'Super Admin', 'slug' => 'superadmin', 'level' => 100],
             ['name' => 'Admin', 'slug' => 'admin', 'level' => 80],
-            ['name' => 'Manager', 'slug' => 'manager', 'level' => 60],
+            ['name' => 'Dokter', 'slug' => 'dokter', 'level' => 60],
             ['name' => 'Operator', 'slug' => 'operator', 'level' => 40],
             ['name' => 'Member', 'slug' => 'member', 'level' => 20],
         ];

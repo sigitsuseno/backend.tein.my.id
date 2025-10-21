@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
-use Log;
 
 class SocialAuthController extends Controller
 {
@@ -56,11 +55,10 @@ class SocialAuthController extends Controller
                 'email' => $googleUser->getEmail(),
                 'google_id' => $googleUser->getId(),
                 'avatar' => $googleUser->getAvatar(),
-                'password' => Hash::make(Str::random(24)), // Random password
-                'username' => $this->generateUsername($googleUser->getName(), $googleUser->getEmail()),
+                'password' => Hash::make(Str::random(24)),
+                'type' => 'member',
                 'status' => 'active',
-                'uuid' => Str::uuid(),
-                'email_verified_at' => now(), // Email sudah terverifikasi oleh Google
+                'email_verified_at' => now(),
             ]);
 
             // Assign role 'member' secara default
@@ -74,7 +72,6 @@ class SocialAuthController extends Controller
             return $this->redirectUser($newUser);
 
         } catch (Exception $e) {
-            Log::error('Google OAuth Error: '.$e->getMessage());
 
             return redirect()->route('login')
                 ->with('error', 'Terjadi kesalahan saat login dengan Google. Silakan coba lagi.');
@@ -117,6 +114,12 @@ class SocialAuthController extends Controller
 
         if ($user->hasRole('member')) {
             $keyname = $user->username ?? $user->uuid;
+
+            if ($user->username === null) {
+
+                return redirect()->route('member.profile.index', ['keyname' => $keyname])
+                    ->with('success', 'Login dengan Google berhasil!');
+            }
 
             return redirect()->route('member.dashboard', ['keyname' => $keyname])
                 ->with('success', 'Login dengan Google berhasil!');

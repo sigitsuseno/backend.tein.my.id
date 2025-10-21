@@ -27,6 +27,7 @@ class User extends Authenticatable
         'type',
         'google_id',
         'avatar',
+        'status',
     ];
 
     /**
@@ -52,6 +53,28 @@ class User extends Authenticatable
         ];
     }
 
+    protected static function generateUniqueCustomId(string $prefix, string $type): string
+    {
+        do {
+            $year = date('Y');
+            $randomNumber = mt_rand(1, 9999999);
+            $paddedNumber = str_pad($randomNumber, 7, '0', STR_PAD_LEFT);
+            $customId = "{$prefix}{$year}-{$type}{$paddedNumber}";
+            $exists = static::where('uuid', $customId)->exists();
+        } while ($exists);
+
+        return $customId;
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->uuid = static::generateUniqueCustomId('MR', 'U');
+        });
+    }
+
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'role_user');
@@ -66,5 +89,20 @@ class User extends Authenticatable
         }
 
         return false;
+    }
+
+    public function details()
+    {
+        return $this->hasOne(UserDetail::class);
+    }
+
+    public function medis()
+    {
+        return $this->hasOne(InformasiMedis::class);
+    }
+
+    public function kontakDarurat()
+    {
+        return $this->hasMany(KontakDarurat::class);
     }
 }

@@ -1,11 +1,9 @@
 @extends('layouts.dash')
 
 @section('content')
-    {{-- Pastikan ini di-include dengan benar --}}
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     @push('header')
-        <div class="w-full h-full px-3 flex items-center justify-start lg:bg-white">
-            <div>test</div>
+        <div class="w-full h-full px-3 flex items-center justify-start ">
+            <div>User Manager</div>
         </div>
     @endpush
 
@@ -136,8 +134,9 @@
             $('#btnCloseModal').on('click', hideModal);
 
             function loadUserData() {
+                var url = "{{ route('admin.user-manager.user') }}"
                 $.ajax({
-                    url: "{{ route('admin.user-manager.user') }}",
+                    url: url,
                     method: "GET",
                     success: function(res) {
                         let data = res.userData;
@@ -230,8 +229,9 @@
             $(document).on('click', '.btnEdit', function() {
                 let id = $(this).data('id');
 
+                var url = "{{ url('admin/user-manager/edit') }}/";
                 $.ajax({
-                    url: "{{ url('admin/user-manager/edit') }}/" + id,
+                    url: url + id,
                     method: "GET",
                     success: function(res) {
                         // Pastikan Controller merespons dengan properti 'user' (bukan 'data')
@@ -263,9 +263,9 @@
                 // Mengganti confirm() dengan alert untuk kepatuhan environment
                 if (!confirm('Yakin ingin menghapus user ini?')) return;
                 let id = $(this).data('id');
-
+                var url = "{{ url('admin/user-manager/delete') }}/"
                 $.ajax({
-                    url: "{{ url('admin/user-manager/delete') }}/" + id,
+                    url: url + id,
                     method: "DELETE",
                     success: function(res) {
                         if (res.success) {

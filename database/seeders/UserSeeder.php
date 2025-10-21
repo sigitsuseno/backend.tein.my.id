@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -14,40 +14,47 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // --- 1. AKUN ADMIN (Contoh: Super Admin) ---
-        User::updateOrCreate(
+
+        $superAdmin = User::updateOrCreate(
+            ['email' => 'admin@app.com'],
             [
-                'email' => 'admin@app.com', // Kolom unik untuk pengecekan
-            ],
-            [
-                'uuid' => Str::uuid(), // Otomatis mengisi UUID
                 'name' => 'Super Admin',
                 'username' => 'superadmin',
-                'email' => 'admin@app.com',
                 'type' => 'admin',
                 'email_verified_at' => now(),
-                'password' => Hash::make('password'), // Password: 'password'
-                'created_at' => now(),
-                'updated_at' => now(),
+                'password' => Hash::make('password'),
             ]
         );
 
-        // --- 2. AKUN MEMBER (Contoh: User Biasa) ---
-        User::updateOrCreate(
+        // Cek secara eksplisit dan isi UUID hanya jika record BARU dibuat
+        if ($superAdmin->wasRecentlyCreated && is_null($superAdmin->uuid)) {
+            $superAdmin->uuid = User::generateUniqueCustomId('MR', 'U');
+            $superAdmin->save();
+        }
+
+        $allRoleIds = Role::pluck('id');
+        $superAdmin->roles()->sync($allRoleIds);
+
+        $member = User::updateOrCreate(
+            ['email' => 'member@app.com'],
             [
-                'email' => 'member@app.com', // Kolom unik untuk pengecekan
-            ],
-            [
-                'uuid' => Str::uuid(), // Otomatis mengisi UUID
                 'name' => 'John Doe Member',
                 'username' => 'johndoe',
-                'email' => 'member@app.com',
                 'type' => 'member',
                 'email_verified_at' => now(),
-                'password' => Hash::make('password'), // Password: 'password'
-                'created_at' => now(),
-                'updated_at' => now(),
+                'password' => Hash::make('password'),
             ]
         );
+
+        // Cek secara eksplisit dan isi UUID hanya jika record BARU dibuat
+        if ($member->wasRecentlyCreated && is_null($member->uuid)) {
+            $member->uuid = User::generateUniqueCustomId('MR', 'U');
+            $member->save();
+        }
+
+        $memberRole = Role::where('slug', 'member')->value('id');
+        if ($memberRole) {
+            $member->roles()->sync([$memberRole]);
+        }
     }
 }

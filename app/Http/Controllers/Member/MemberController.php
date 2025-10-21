@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class MemberController extends Controller
 {
@@ -18,6 +19,10 @@ class MemberController extends Controller
 
     public function dashboard()
     {
-        return view('member.dashboard.index');
+        $user_id = Auth::user()->id;
+
+        return view('member.dashboard.index', [
+            'user' => User::where('id', $user_id)->with('roles')->first(),
+        ]);
     }
 }

@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Laravel') }}</title>
     <link href="{{ asset('assets/boxicons/css/boxicons.min.css') }}" rel="stylesheet" />
+    <script src="{{ asset('assets/js/cdn.min.js') }}" defer></script>
     <title>{{ $nama_app }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @yield('css')
@@ -17,13 +18,14 @@
 
         @include('layouts.partials.dashHeader')
 
-        <main id="main-scroll-area" class="w-full h-screen pt-12 lg:pt-14 overflow-y-auto bg-putih">
+        <main id="main-scroll-area" class="w-full h-screen pt-12 lg:pt-14 overflow-y-auto bg-putih mini_scroll">
             @yield('content')
         </main>
 
     </div>
     @yield('modal')
     <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ asset('assets/js/sweetalert2@11.js') }}"></script>
     <script src="{{ asset('assets/js/dash.js') }}"></script>
     @yield('js')
 </body>

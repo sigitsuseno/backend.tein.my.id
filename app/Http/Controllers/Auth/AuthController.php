@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 
+use function PHPUnit\Framework\isNull;
+
 class AuthController extends Controller
 {
     public function formLogin()
@@ -241,8 +243,13 @@ class AuthController extends Controller
 
         if ($user->hasRole('member')) {
             $keyname = $user->username ?? $user->uuid;
+            if (isNull($user->username)) {
+
+                return route('member.profile.index', ['keyname' => $keyname]);
+            }
 
             return route('member.dashboard', ['keyname' => $keyname]);
+
         }
 
         return route('home');

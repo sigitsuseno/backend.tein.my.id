@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -47,15 +47,21 @@ class AdminController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             'type' => 'nullable|string',
+
         ]);
 
         $user = User::create([
-            'uuid' => (string) Str::uuid(),
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'type' => $request->type,
+            'status' => 'registered',
         ]);
+
+        $memberRole = Role::where('name', 'member')->first();
+        if ($memberRole) {
+            $user->roles()->attach($memberRole);
+        }
 
         return response()->json([
             'success' => true,
